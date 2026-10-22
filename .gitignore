@@ -1,0 +1,5 @@
+dist/
+.machine-id
+.DS_Store
+.idea/
+.vscode/

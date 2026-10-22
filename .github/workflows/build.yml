@@ -1,0 +1,33 @@
+# Tests the resource on every push and pull request. For a release build with your SunLicense API key,
+# add the repository secret SUNLICENSE_API_KEY (Settings -> Secrets and variables -> Actions); forks and
+# PRs build without it.
+name: Build
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lua 5.4
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lua5.4 >/dev/null
+      - run: lua5.4 tests/run.lua
+      - name: Package
+        env:
+          SUNLICENSE_API_KEY: ${{ secrets.SUNLICENSE_API_KEY }}
+        run: sh scripts/package.sh
+      # The build is your paid product: only keep it as a download when the repository is private.
+      - uses: actions/upload-artifact@v4
+        if: github.event.repository.private
+        with:
+          name: resource
+          path: dist/my-resource
+          if-no-files-found: error
+          retention-days: 14
