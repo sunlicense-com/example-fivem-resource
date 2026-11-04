@@ -25,9 +25,24 @@ local function serverId()
 end
 local machine = serverId()
 
---- Your resource's features: register events, commands and threads here, not at the top of a file.
+-- Anonymous usage statistics for your Analytics tab (server.cfg: set my_resource_analytics false to turn off).
+local analytics = License.analytics(SunLicenseSettings, licenseKey, machine, function()
+    return GetConvar('my_resource_analytics', 'true') ~= 'false'
+end)
+
+-- Who owns this resource, in every server's console (product, owner, masked key).
+print(('[%s] %s'):format(resource, License.notice(SunLicenseSettings, licenseKey, machine)))
+
+--- Starts your features: they live in server/core.lua, which the build you sell carries only sealed
+--- (scripts/package.sh), so they run only once SunLicense has confirmed the license. True when started.
 local function startFeatures()
-    print(('^2[%s] Running.^7'):format(resource))
+    local core, why = License.core()
+    if not core then
+        print(('^1[%s] The protected part could not start: %s^7'):format(resource, tostring(why)))
+        return false
+    end
+    if type(core.start) == 'function' then core.start(resource) end
+    return true
 end
 
 local check
@@ -36,19 +51,22 @@ local function apply(result)
     status = result
     if result.state == 'VALID' then
         if not started then
-            started = true
             print(('^2[%s] License %s: %s^7'):format(resource, License.mask(licenseKey), result.message))
-            startFeatures()
+            started = startFeatures()
         end
     elseif result.state == 'REJECTED' or result.state == 'NOT_CONFIGURED' then
         print(('^1[%s] License %s: %s^7'):format(resource, License.mask(licenseKey), result.message))
         print(('^1[%s] Stopping until this is fixed.^7'):format(resource))
+        analytics:close()
         StopResource(resource)
     else
         print(('^3[%s] %s Trying again in 10 minutes.^7'):format(resource, result.message))
         if ALLOW_WHEN_UNREACHABLE and not started then
-            started = true
-            startFeatures()
+            -- the core opens with the unlock cached from a valid check in the last 7 days
+            started = startFeatures()
+            if not started then
+                print(('^1[%s] Its protected part needs one valid license check first; it will start once SunLicense answers.^7'):format(resource))
+            end
         elseif not started then
             print(('^1[%s] Needs a license check to start; it will start once SunLicense answers.^7'):format(resource))
         end
