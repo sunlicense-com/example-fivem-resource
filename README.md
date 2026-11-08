@@ -1,5 +1,11 @@
 # FiveM resource with SunLicense
 
+<!-- sunlicense:distribution -->
+[![Build](https://github.com/sunlicense-com/example-fivem-resource/actions/workflows/build.yml/badge.svg)](https://github.com/sunlicense-com/example-fivem-resource/actions/workflows/build.yml)
+[![Licence: MIT-0](https://img.shields.io/badge/licence-MIT--0-blue)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-docs.sunlicense.com-f97316)](https://docs.sunlicense.com/guide/templates)
+[![SunLicense: free plan](https://img.shields.io/badge/SunLicense-free%20plan-f97316)](https://sunlicense.com/start?ref=gh-fivem)
+
 A working, copyable [FiveM](https://fivem.net) server resource (Lua) with [SunLicense](https://sunlicense.com)
 built in: each server needs a valid license key, leaked keys can be revoked or blocked, and your
 customers' servers keep running if SunLicense is ever unreachable.
@@ -14,6 +20,19 @@ customers' servers keep running if SunLicense is ever unreachable.
 Works on FiveM (GTA V); change `game` in `fxmanifest.lua` to `'rdr3'` for RedM. There's no offline
 license file here (Lua has no Ed25519 built in): when SunLicense can't be reached the resource keeps
 running and checks again later.
+
+<p align="center"><img src=".github/demo.gif" width="720" alt="The resource starts with a valid license; after the key is revoked, a restart stops it"></p>
+
+## Set up in one prompt
+
+1. Click **Use this template** (or `gh repo create my-resource --template sunlicense-com/example-fivem-resource --private --clone`).
+2. Open the folder in Claude Code, Cursor, Codex or Copilot and paste the prompt from
+   **[sunlicense.com/prompt](https://sunlicense.com/prompt?ref=gh-fivem)**.
+
+The agent installs the SunLicense CLI, creates a free guest account (no sign-up form; keep it by adding your email
+later), a product, a policy and an API key, puts them where this template reads them ([AGENTS.md](AGENTS.md)) and
+proves a license check comes back valid. Rather do it by hand? Make a
+[free account](https://sunlicense.com/start?ref=gh-fivem) and follow the steps below.
 
 ## 1. Set up SunLicense
 
@@ -101,6 +120,15 @@ tests/run.lua         every result against stubbed FiveM functions
 scripts/package.sh    the folder you sell, with your API key and the sealed core
 .github/workflows/build.yml   CI
 ```
+
+## Links
+
+- Docs: [all templates](https://docs.sunlicense.com/guide/templates) · [SDKs](https://docs.sunlicense.com/guide/sdks) ·
+  [store integrations](https://docs.sunlicense.com/integrations/)
+- [SunLicense](https://sunlicense.com/?ref=gh-fivem): license keys for software you sell, with store integrations,
+  a Discord bot for your buyers and leak alerts. Free for 3 products and 100 licenses:
+  [create an account](https://sunlicense.com/start?ref=gh-fivem).
+- Questions or a bug in this template: [open an issue](https://github.com/sunlicense-com/example-fivem-resource/issues).
 
 ## Licence
 
